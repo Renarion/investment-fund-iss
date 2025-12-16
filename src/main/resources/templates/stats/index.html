@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Статистика</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/layout :: navbar('stats')}"></div>
+
+<main class="container py-4">
+
+  <h1 class="h4 mb-3">Статистика инвестиционного фонда</h1>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="bg-white rounded shadow-sm p-3">
+        <div class="text-muted small">Количество инвесторов</div>
+        <div class="fs-3 fw-semibold" th:text="${investors}">0</div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="bg-white rounded shadow-sm p-3">
+        <div class="text-muted small">Количество операций</div>
+        <div class="fs-3 fw-semibold" th:text="${operations}">0</div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="bg-white rounded shadow-sm p-3">
+        <div class="text-muted small">Сумма вложений (net)</div>
+        <div class="fs-3 fw-semibold" th:text="${totalNet}">0</div>
+        <div class="text-muted small">DEPOSIT − WITHDRAW</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="bg-white rounded shadow-sm p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="h6 m-0">Топ фондов по сумме вложений</h2>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+            <tr>
+              <th>Фонд</th>
+              <th class="text-end">Net</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="r : ${topFunds}">
+              <td th:text="${r.name}"></td>
+              <td class="text-end" th:text="${r.amount}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(topFunds)}">
+              <td colspan="2" class="text-center text-muted py-3">Нет данных</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="bg-white rounded shadow-sm p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="h6 m-0">Топ инвесторов по сумме вложений</h2>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+            <tr>
+              <th>Инвестор</th>
+              <th class="text-end">Net</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="r : ${topInvestors}">
+              <td th:text="${r.name}"></td>
+              <td class="text-end" th:text="${r.amount}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(topInvestors)}">
+              <td colspan="2" class="text-center text-muted py-3">Нет данных</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>
