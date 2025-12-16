@@ -31,9 +31,9 @@
 
     <div class="col-md-4">
       <div class="bg-white rounded shadow-sm p-3">
-        <div class="text-muted small">Сумма вложений (net)</div>
-        <div class="fs-3 fw-semibold" th:text="${totalNet}">0</div>
-        <div class="text-muted small">DEPOSIT − WITHDRAW</div>
+        <div class="text-muted small">Сумма вложений</div>
+        <div class="fs-3 fw-semibold" th:text="${@vf.money(totalNet)}">0</div>
+        <div class="text-muted small">Пополнение − Вывод</div>
       </div>
     </div>
   </div>
@@ -50,13 +50,13 @@
             <thead>
             <tr>
               <th>Фонд</th>
-              <th class="text-end">Net</th>
+              <th class="text-end">Чистые средства</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="r : ${topFunds}">
               <td th:text="${r.name}"></td>
-              <td class="text-end" th:text="${r.amount}"></td>
+              <td class="text-end" th:text="${@vf.money(r.amount)}"></td>
             </tr>
             <tr th:if="${#lists.isEmpty(topFunds)}">
               <td colspan="2" class="text-center text-muted py-3">Нет данных</td>
@@ -79,13 +79,13 @@
             <thead>
             <tr>
               <th>Инвестор</th>
-              <th class="text-end">Net</th>
+              <th class="text-end">Чистые средства</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="r : ${topInvestors}">
               <td th:text="${r.name}"></td>
-              <td class="text-end" th:text="${r.amount}"></td>
+              <td class="text-end" th:text="${@vf.money(r.amount)}"></td>
             </tr>
             <tr th:if="${#lists.isEmpty(topInvestors)}">
               <td colspan="2" class="text-center text-muted py-3">Нет данных</td>

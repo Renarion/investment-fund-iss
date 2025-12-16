@@ -8,6 +8,9 @@
 </head>
 <body class="bg-light">
 
+<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
 <div th:replace="fragments/layout :: navbar('investors')"></div>
 
 <main class="container py-4">
@@ -55,7 +58,7 @@
       <tr th:each="i : ${investors.content}">
         <td th:text="${i.fullName}"></td>
         <td th:text="${i.email}"></td>
-        <td th:text="${i.phone}"></td>
+        <td th:text="${@vf.phone(i.phone)}"></td>
         <td class="text-end">
           <a class="btn btn-sm btn-outline-dark" th:href="@{'/manager/investors/' + ${i.id} + '/edit'}">Изменить</a>
           <form class="d-inline" th:action="@{'/manager/investors/' + ${i.id} + '/delete'}" method="post">

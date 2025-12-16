@@ -1,30 +1,222 @@
 <!doctype html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+
+  <style>
+    /* ====== TICKER ====== */
+    .ticker-wrap{
+      margin-top: 20px;         
+      border-radius: 0;        
+      box-shadow: 0 6px 18px rgba(0,0,0,.25);
+      background:#15181b;
+      border-top:1px solid rgba(255,255,255,.08);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      overflow:hidden;
+    }
+
+    .ticker-track{
+      display:flex;
+      width:max-content;
+      gap:14px;
+      padding:10px 0;
+      white-space:nowrap;
+      will-change: transform;
+      animation: tickerMove 30s linear infinite;
+    }
+
+    /* запрет переносов вообще */
+    .ticker-track, .ticker-track * { white-space: nowrap; }
+
+    .ticker-item{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 999px;
+
+      padding: 6px 12px;
+      font-size: 14px;
+      line-height: 1;
+      color: #fff;
+    }
+
+    .ticker-sym{
+      font-weight:600;
+      letter-spacing:.2px;
+      opacity:.95;
+    }
+
+    .ticker-price{
+      font-variant-numeric: tabular-nums;
+      opacity:.95;
+    }
+
+    .ticker-chg{
+      font-variant-numeric: tabular-nums;
+      font-weight:600;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .ticker-item.up .ticker-chg{ color:#47d18c; }
+    .ticker-item.down .ticker-chg{ color:#ff6b6b; }
+
+    .arrow{
+      font-size: 12px;
+      opacity: .95;
+    }
+
+    @keyframes tickerMove{
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .ticker-wrap:hover .ticker-track { animation-play-state: paused; }
+
+    @media (prefers-reduced-motion: reduce){
+      .ticker-track{ animation:none; }
+    }
+  </style>
+</head>
+
 <body>
 
-<nav th:fragment="navbar(active)"
-     class="navbar navbar-expand-lg navbar-dark bg-dark">
+<!-- NAVBAR fragment -->
+<nav th:fragment="navbar(active)" class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
-    <a class="navbar-brand" href="/">Investment Fund ISS</a>
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+      <img src="/img/logo.png" alt="logo" style="height:40px;width:auto;">
+      <span>ИнвестФонд - ИСС</span>
+    </a>
 
-   <div class="navbar-nav ms-auto align-items-center">
-      <a class="nav-link" th:classappend="${active=='home'} ? 'active'" href="/">Главная</a>
-      <a class="nav-link" th:classappend="${active=='about'} ? 'active'" href="/about">Об авторе</a>
-      <a class="nav-link" th:classappend="${active=='funds'} ? 'active'" href="/manager/funds">Фонды</a>
-      <a class="nav-link" th:classappend="${active=='assets'} ? 'active'" href="/manager/assets">Активы</a>
-      <a class="nav-link" th:classappend="${active=='investors'} ? 'active'" href="/manager/investors">Инвесторы</a>
-      <a class="nav-link" th:classappend="${active=='tx'} ? 'active'" href="/manager/transactions">Операции</a>
-      <a class="nav-link" th:classappend="${active=='stats'} ? 'active'" href="/manager/stats">Статистика</a>
+    <div class="navbar-nav ms-auto align-items-center">
+      <a class="nav-link" th:classappend="${active=='home'} ? ' active'" href="/">Главная</a>
+      <a class="nav-link" th:classappend="${active=='about'} ? ' active'" href="/about">Об авторе</a>
+      <a class="nav-link" th:classappend="${active=='funds'} ? ' active'" href="/manager/funds">Фонды</a>
+      <a class="nav-link" th:classappend="${active=='assets'} ? ' active'" href="/manager/assets">Активы</a>
+      <a class="nav-link" th:classappend="${active=='investors'} ? ' active'" href="/manager/investors">Инвесторы</a>
+      <a class="nav-link" th:classappend="${active=='tx'} ? ' active'" href="/manager/transactions">Операции</a>
+      <a class="nav-link" th:classappend="${active=='stats'} ? ' active'" href="/manager/stats">Статистика</a>
 
-      <form class="d-flex" th:action="@{/logout}" method="post">
-         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-         <button class="nav-link btn btn-link" type="submit" style="padding: 0.5rem 1rem;">
-            Выход
-         </button>
+      <form class="mb-0 ms-2" th:action="@{/logout}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <button class="nav-link btn btn-link" type="submit" style="padding: 0.5rem 1rem;">
+          Выход
+        </button>
       </form>
-   </div>
+    </div>
   </div>
 </nav>
+
+<!-- TICKER fragment -->
+<div th:fragment="ticker" class="ticker-wrap">
+
+  <style>
+    .ticker-wrap{
+      margin-top: 20px;          
+      border-radius: 0;      
+      box-shadow: 0 6px 18px rgba(0,0,0,.25);
+      background:#15181b;
+      border-top:1px solid rgba(255,255,255,.08);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      overflow:hidden;
+      position: relative;
+    }
+
+    /* “маски” слева/справа как на биржевых лентах */
+    .ticker-wrap:before,
+    .ticker-wrap:after{
+      content:"";
+      position:absolute;
+      top:0; bottom:0;
+      width: 80px;
+      z-index: 2;
+      pointer-events:none;
+    }
+    .ticker-wrap:before{
+      left:0;
+      background: linear-gradient(to right, #0f1113, rgba(15,17,19,0));
+    }
+    .ticker-wrap:after{
+      right:0;
+      background: linear-gradient(to left, #0f1113, rgba(15,17,19,0));
+    }
+
+    .ticker-track{
+      display:flex;
+      width: max-content;
+      gap: 14px;
+      padding: 10px 0;
+      white-space: nowrap;
+      will-change: transform;
+      animation: tickerMove 28s linear infinite;
+    }
+    .ticker-track, .ticker-track * { white-space: nowrap; }
+
+    .ticker-item{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 14px;
+      line-height: 1;
+      color: #fff;
+      z-index: 1;
+    }
+
+    .ticker-sym{ font-weight:600; letter-spacing:.2px; opacity:.95; }
+    .ticker-price{ font-variant-numeric: tabular-nums; opacity:.95; }
+
+    .ticker-chg{
+      font-variant-numeric: tabular-nums;
+      font-weight:700;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+    .ticker-item.up .ticker-chg{ color:#47d18c; }
+    .ticker-item.down .ticker-chg{ color:#ff6b6b; }
+
+    .arrow{ font-size: 12px; opacity:.95; }
+
+    @keyframes tickerMove{
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .ticker-wrap:hover .ticker-track { animation-play-state: paused; }
+  </style>
+
+  <!-- ВАЖНО: тут НЕ container, чтобы было во всю ширину как на бирже -->
+  <div class="ticker-track" aria-label="Котировки (демо)">
+
+    <!-- ГРУППА 1 -->
+    <span class="ticker-item up"><span class="ticker-sym">AAPL</span><span class="ticker-price">195.12</span><span class="ticker-chg"><span class="arrow">▲</span>1.25%</span></span>
+    <span class="ticker-item down"><span class="ticker-sym">MSFT</span><span class="ticker-price">412.30</span><span class="ticker-chg"><span class="arrow">▼</span>0.44%</span></span>
+    <span class="ticker-item up"><span class="ticker-sym">GOOGL</span><span class="ticker-price">142.80</span><span class="ticker-chg"><span class="arrow">▲</span>0.62%</span></span>
+    <span class="ticker-item down"><span class="ticker-sym">TSLA</span><span class="ticker-price">248.10</span><span class="ticker-chg"><span class="arrow">▼</span>1.10%</span></span>
+    <span class="ticker-item up"><span class="ticker-sym">SBER</span><span class="ticker-price">285.40</span><span class="ticker-chg"><span class="arrow">▲</span>0.30%</span></span>
+    <span class="ticker-item down"><span class="ticker-sym">GAZP</span><span class="ticker-price">162.10</span><span class="ticker-chg"><span class="arrow">▼</span>0.15%</span></span>
+    <span class="ticker-item up"><span class="ticker-sym">USD/RUB</span><span class="ticker-price">91.50</span><span class="ticker-chg"><span class="arrow">▲</span>0.08%</span></span>
+
+    <!-- ГРУППА 2 (копия для бесконечности) -->
+    <span class="ticker-item up"><span class="ticker-sym">AAPL</span><span class="ticker-price">195.12</span><span class="ticker-chg"><span class="arrow">▲</span>1.25%</span></span>
+    <span class="ticker-item down"><span class="ticker-sym">MSFT</span><span class="ticker-price">412.30</span><span class="ticker-chg"><span class="arrow">▼</span>0.44%</span></span>
+    <span class="ticker-item up"><span class="ticker-sym">GOOGL</span><span class="ticker-price">142.80</span><span class="ticker-chg"><span class="arrow">▲</span>0.62%</span></span>
+    <span class="ticker-item down"><span class="ticker-sym">TSLA</span><span class="ticker-price">248.10</span><span class="ticker-chg"><span class="arrow">▼</span>1.10%</span></span>
+    <span class="ticker-item up"><span class="ticker-sym">SBER</span><span class="ticker-price">285.40</span><span class="ticker-chg"><span class="arrow">▲</span>0.30%</span></span>
+    <span class="ticker-item down"><span class="ticker-sym">GAZP</span><span class="ticker-price">162.10</span><span class="ticker-chg"><span class="arrow">▼</span>0.15%</span></span>
+    <span class="ticker-item up"><span class="ticker-sym">USD/RUB</span><span class="ticker-price">91.50</span><span class="ticker-chg"><span class="arrow">▲</span>0.08%</span></span>
+
+  </div>
+</div>
 
 </body>
 </html>

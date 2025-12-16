@@ -33,6 +33,9 @@ public interface TransactionRepository extends JpaRepository<InvestmentTransacti
             Pageable pageable
     );
 
+    boolean existsByFundId(Long fundId);
+    boolean existsByInvestorId(Long investorId);
+
     // =========================
     // 2. Агрегаты для статистики
     // =========================

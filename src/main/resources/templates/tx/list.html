@@ -94,11 +94,11 @@
       </thead>
       <tbody>
       <tr th:each="t : ${txPage.content}">
-        <td th:text="${t.txDate}"></td>
+        <td th:text="${@vf.date(t.txDate)}"></td>
         <td th:text="${t.investor.fullName}"></td>
         <td th:text="${t.fund.name}"></td>
-        <td th:text="${t.type}"></td>
-        <td class="text-end" th:text="${t.amount}"></td>
+        <td th:text="${@vf.txType(t.type.toString())}"></td>
+        <td class="text-end" th:text="${@vf.money(t.amount)}"></td>
         <td th:text="${t.comment}"></td>
 
         <td class="text-end">

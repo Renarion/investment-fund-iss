@@ -1,5 +1,6 @@
 package com.coursework.investment_fund.investor;
 
+import com.coursework.investment_fund.tx.TransactionRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.*;
@@ -7,16 +8,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/manager/investors")
 public class InvestorController {
 
     private final InvestorRepository repo;
+    private final TransactionRepository txRepo;
 
-    public InvestorController(InvestorRepository repo) {
+    public InvestorController(InvestorRepository repo, TransactionRepository txRepo) {
         this.repo = repo;
+        this.txRepo = txRepo;
     }
 
     @GetMapping
@@ -50,18 +53,18 @@ public class InvestorController {
 
     @PostMapping
     public String create(@Valid @ModelAttribute Investor investor, BindingResult br, Model model) {
-    if (br.hasErrors()) {
-        model.addAttribute("mode", "create");
-        return "investors/form";
-    }
-    try {
-        repo.save(investor);
-    } catch (DataIntegrityViolationException ex) {
-        model.addAttribute("mode", "create");
-        model.addAttribute("dbError", "Инвестор с таким email уже существует");
-        return "investors/form";
-    }
-    return "redirect:/manager/investors";
+        if (br.hasErrors()) {
+            model.addAttribute("mode", "create");
+            return "investors/form";
+        }
+        try {
+            repo.save(investor);
+        } catch (DataIntegrityViolationException ex) {
+            model.addAttribute("mode", "create");
+            model.addAttribute("dbError", "Инвестор с таким email уже существует");
+            return "investors/form";
+        }
+        return "redirect:/manager/investors";
     }
 
     @GetMapping("/{id}/edit")
@@ -73,29 +76,36 @@ public class InvestorController {
 
     @PostMapping("/{id}")
     public String update(@PathVariable Long id, @Valid @ModelAttribute Investor investor, BindingResult br, Model model) {
-    if (br.hasErrors()) {
-        model.addAttribute("mode", "edit");
-        return "investors/form";
-    }
-    Investor existing = repo.findById(id).orElseThrow();
-    existing.setFullName(investor.getFullName());
-    existing.setEmail(investor.getEmail());
-    existing.setPhone(investor.getPhone());
+        if (br.hasErrors()) {
+            model.addAttribute("mode", "edit");
+            return "investors/form";
+        }
+        Investor existing = repo.findById(id).orElseThrow();
+        existing.setFullName(investor.getFullName());
+        existing.setEmail(investor.getEmail());
+        existing.setPhone(investor.getPhone());
 
-    try {
-        repo.save(existing);
-    } catch (DataIntegrityViolationException ex) {
-        model.addAttribute("mode", "edit");
-        model.addAttribute("dbError", "Инвестор с таким email уже существует");
-        model.addAttribute("investor", existing);
-        return "investors/form";
-    }
-    return "redirect:/manager/investors";
+        try {
+            repo.save(existing);
+        } catch (DataIntegrityViolationException ex) {
+            model.addAttribute("mode", "edit");
+            model.addAttribute("dbError", "Инвестор с таким email уже существует");
+            model.addAttribute("investor", existing);
+            return "investors/form";
+        }
+        return "redirect:/manager/investors";
     }
 
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id) {
+    public String delete(@PathVariable Long id, RedirectAttributes ra) {
+
+        if (txRepo.existsByInvestorId(id)) {
+            ra.addFlashAttribute("error", "Нельзя удалить инвестора: есть связанные операции в журнале.");
+            return "redirect:/manager/investors";
+        }
+
         repo.deleteById(id);
+        ra.addFlashAttribute("success", "Инвестор удалён.");
         return "redirect:/manager/investors";
     }
 }

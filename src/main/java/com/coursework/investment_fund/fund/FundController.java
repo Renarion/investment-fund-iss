@@ -1,11 +1,13 @@
 package com.coursework.investment_fund.fund;
 
+import com.coursework.investment_fund.tx.TransactionRepository;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 
@@ -14,9 +16,11 @@ import java.time.LocalDate;
 public class FundController {
 
     private final FundRepository repo;
+    private final TransactionRepository txRepo;
 
-    public FundController(FundRepository repo) {
+    public FundController(FundRepository repo, TransactionRepository txRepo) {
         this.repo = repo;
+        this.txRepo = txRepo;
     }
 
     @GetMapping
@@ -86,8 +90,15 @@ public class FundController {
     }
 
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id) {
+    public String delete(@PathVariable Long id, RedirectAttributes ra) {
+
+        if (txRepo.existsByFundId(id)) {
+            ra.addFlashAttribute("error", "Нельзя удалить фонд: есть связанные операции в журнале.");
+            return "redirect:/manager/funds";
+        }
+
         repo.deleteById(id);
+        ra.addFlashAttribute("success", "Фонд удалён.");
         return "redirect:/manager/funds";
     }
 }

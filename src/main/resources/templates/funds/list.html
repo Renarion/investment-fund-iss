@@ -8,6 +8,9 @@
 </head>
 <body class="bg-light">
 
+<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
 <div th:replace="fragments/layout :: navbar('funds')"></div>
 
 <main class="container py-4">
@@ -23,14 +26,14 @@
     <div class="col-sm-2">
       <select class="form-select" name="sort">
         <option value="name" th:selected="${sort=='name'}">Сорт: имя</option>
-        <option value="nav" th:selected="${sort=='nav'}">Сорт: NAV</option>
+        <option value="nav" th:selected="${sort=='nav'}">Сорт: NAV (Стоимость чистых активов)</option>
         <option value="createdDate" th:selected="${sort=='createdDate'}">Сорт: дата</option>
       </select>
     </div>
     <div class="col-sm-2">
       <select class="form-select" name="dir">
-        <option value="asc" th:selected="${dir=='asc'}">↑ ASC</option>
-        <option value="desc" th:selected="${dir=='desc'}">↓ DESC</option>
+        <option value="asc" th:selected="${dir=='asc'}">↑ Возр.</option>
+        <option value="desc" th:selected="${dir=='desc'}">↓ Убыв.</option>
       </select>
     </div>
     <div class="col-12">
@@ -46,7 +49,7 @@
         <th>Стратегия</th>
         <th>Риск</th>
         <th>Валюта</th>
-        <th class="text-end">NAV</th>
+        <th class="text-end">NAV (Стоимость чистых активов)</th>
         <th>Дата</th>
         <th class="text-end">Действия</th>
       </tr>
