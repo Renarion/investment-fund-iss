@@ -1,6 +1,6 @@
 # ИнвестФонд — ИСС (Investment Fund ISS)
 
-![alt text](image.png)
+![Главная страница](src/main/resources/static/img/image.png)
 
 Веб-приложение (информационно-справочная система) для ведения справочников инвестиционного фонда и учета операций инвесторов.
 Реализованы CRUD-страницы для фондов, активов, инвесторов и операций, а также раздел статистики.
@@ -49,9 +49,9 @@ http://localhost:8080/login/
 
 ## Демонстрация страниц: 
 
-![alt text](image-1.png)
-![alt text](image-2.png)
-![alt text](image-3.png)
+![alt text](src/main/resources/static/img/image-1.png)
+![alt text](src/main/resources/static/img/image-2.png)
+![alt text](src/main/resources/static/img/image-3.png)
 
 
 ## Структура проекта (файлы):
