@@ -62,7 +62,7 @@ investment-fund-iss/
 │   ├── main/
 │   │   ├── java/
 │   │   │   └── com/coursework/investment_fund/
-│   │   │       ├── InvestmentFundApplication.java   # Точка входа Spring Boot
+│   │   │       ├── InvestmentFundApplication.java  
 │   │   │
 │   │   │       ├── security/                         # Безопасность и роли
 │   │   │       │   ├── SecurityConfig.java
@@ -96,13 +96,31 @@ investment-fund-iss/
 │   │   │   ├── templates/                            # HTML-шаблоны Thymeleaf
 │   │   │   │   ├── fragments/                        # Общие фрагменты
 │   │   │   │   │   └── layout.html
+│   │   │   │   │
 │   │   │   │   ├── funds/
+│   │   │   │   │   ├── index.html
+│   │   │   │   │   └── form.html
+│   │   │   │   │
 │   │   │   │   ├── assets/
+│   │   │   │   │   ├── index.html
+│   │   │   │   │   └── form.html
+│   │   │   │   │
 │   │   │   │   ├── investors/
+│   │   │   │   │   ├── index.html
+│   │   │   │   │   └── form.html
+│   │   │   │   │
 │   │   │   │   ├── tx/
+│   │   │   │   │   ├── index.html
+│   │   │   │   │   └── form.html
+│   │   │   │   │
 │   │   │   │   ├── stats/
+│   │   │   │   │   └── layout.html
+│   │   │   │   │
 │   │   │   │   ├── about.html
-│   │   │   │   └── index.html
+│   │   │   │   ├── error.html
+│   │   │   │   ├── index.html
+│   │   │   │   ├── login.html
+│   │   │   │   └── register.html
 │   │   │   │
 │   │   │   ├── static/                               # Статические ресурсы
 │   │   │   │   └── img/                              # Логотип и изображения
@@ -110,12 +128,12 @@ investment-fund-iss/
 │   │   │   │       └── author.jpg
 │   │   │   │
 │   │   │   ├── application.properties                # Конфигурация приложения
-│   │   │   └── data.sql                               # Демонстрационные данные
+│   │   │   └── data.sql                              # Демонстрационные данные
 │   │
-│   └── test/                                         # Тесты (при необходимости)
+│   └── test/                                        
 │
 ├── mvnw                                              # Maven Wrapper (Unix)
 ├── mvnw.cmd                                          # Maven Wrapper (Windows)
 ├── pom.xml                                           # Maven-конфигурация проекта
-└── README.md                                         # Описание проекта
+└── README.md                                         
 ```
