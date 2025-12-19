@@ -13,9 +13,7 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<InvestmentTransaction, Long> {
 
-    // =========================
     // 1. Поиск для журнала операций
-    // =========================
     @Query("""
         select t from InvestmentTransaction t
         where (:investorId is null or t.investor.id = :investorId)
@@ -36,9 +34,7 @@ public interface TransactionRepository extends JpaRepository<InvestmentTransacti
     boolean existsByFundId(Long fundId);
     boolean existsByInvestorId(Long investorId);
 
-    // =========================
     // 2. Агрегаты для статистики
-    // =========================
 
     /** Количество уникальных инвесторов */
     @Query("select count(distinct t.investor.id) from InvestmentTransaction t")

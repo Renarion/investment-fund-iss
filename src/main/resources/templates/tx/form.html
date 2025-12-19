@@ -39,7 +39,7 @@
         <div class="col-md-4 mb-3">
           <label class="form-label">Тип</label>
           <select class="form-select" th:field="*{type}">
-            <option th:each="t : ${types}" th:value="${t}" th:text="${t.name()}"></option>
+            <option th:each="t : ${types}" th:value="${t}" th:text="${t.label}"></option>
           </select>
           <div class="text-danger small" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></div>
         </div>

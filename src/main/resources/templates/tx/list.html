@@ -45,7 +45,7 @@
         <option th:each="t : ${types}"
                 th:value="${t.name()}"
                 th:selected="${type != null and type == t.name()}"
-                th:text="${t.name()}">
+                th:text="${t.label}">
         </option>
       </select>
     </div>
